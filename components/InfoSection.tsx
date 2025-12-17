@@ -176,14 +176,14 @@ export default function InfoSection() {
                 <p>
                   The customer evaluates the displayed restaurants and either makes a reservation or leaves without 
                   purchasing. The decision is based on a score that combines store valuation, rating, price, and 
-                  distance. If no restaurant meets the customer's threshold, they leave.
+                  distance. If no restaurant meets the customer&apos;s threshold, they leave.
                 </p>
               </div>
 
               <div>
                 <h4 className="font-semibold text-lg text-gray-900 mb-2">5. Reservation Processing</h4>
                 <p>
-                  When a reservation is made, there's a 10% chance it will be cancelled. Cancelled reservations 
+                  When a reservation is made, there&apos;s a 10% chance it will be cancelled. Cancelled reservations 
                   result in lost revenue. Confirmed reservations generate revenue and reduce inventory.
                 </p>
               </div>
