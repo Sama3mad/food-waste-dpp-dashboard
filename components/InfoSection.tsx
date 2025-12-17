@@ -47,34 +47,38 @@ export default function InfoSection() {
           <div className="space-y-4">
             <h3 className="text-2xl font-bold text-gray-900">Project Overview</h3>
             <p className="text-gray-700 leading-relaxed">
-              This dashboard simulates a food waste marketplace where restaurants can sell surplus food bags 
-              to customers. The goal is to minimize food waste while maximizing revenue and ensuring fair 
-              exposure for all restaurants.
+              This dashboard presents a comprehensive simulation of a food waste marketplace platform where restaurants 
+              can list and sell surplus food bags to customers. The simulation evaluates six distinct ranking algorithms 
+              to determine their effectiveness in minimizing food waste, optimizing revenue generation, and ensuring 
+              equitable exposure across all participating restaurants.
             </p>
             
             <div className="bg-blue-50 rounded-lg p-4 mt-6">
-              <h4 className="font-semibold text-blue-900 mb-2">Key Assumptions</h4>
+              <h4 className="font-semibold text-blue-900 mb-2">Simulation Parameters and Assumptions</h4>
               <ul className="list-disc list-inside text-gray-700 space-y-2">
-                <li>Simulation runs for <strong>7 days</strong> with <strong>100 customers per day</strong></li>
-                <li>Each customer sees the top <strong>5 restaurants</strong> based on the selected ranking algorithm</li>
-                <li>Restaurants have estimated and actual inventory (actual varies by ±20%)</li>
-                <li>Customers make decisions based on price, rating, distance, and personal preferences</li>
-                <li>Reservations can be cancelled (approximately 10% cancellation rate)</li>
-                <li>Unsold bags at the end of each day count as waste</li>
-                <li>Restaurant ratings can change dynamically based on order confirmations and cancellations</li>
+                <li>The simulation period spans <strong>7 consecutive days</strong>, with <strong>100 customer arrivals per day</strong>, resulting in a total of 700 customer interactions</li>
+                <li>Each customer is presented with exactly <strong>5 restaurant options</strong> per visit, selected by the active ranking algorithm</li>
+                <li>Restaurants maintain both estimated and actual daily inventory levels, where actual inventory varies randomly between 80% and 120% of the estimated value to model real-world inventory uncertainty</li>
+                <li>Customer decision-making incorporates multiple factors: restaurant ratings, price points, geographical distance (maximum travel distance of 0.05 coordinate units), and individual customer preferences including segment classification (budget, premium, regular)</li>
+                <li>Reservations are subject to a <strong>10% cancellation rate</strong>, representing real-world scenarios where customers may change plans or encounter unforeseen circumstances</li>
+                <li>Food bags that remain unsold at the end of each business day are classified as waste, contributing to the total waste metric</li>
+                <li>Restaurant ratings are dynamically adjusted based on transaction outcomes: successful order confirmations increase ratings, while cancellations result in rating decreases</li>
+                <li>When restaurant inventory exceeds reservation demand, customers may receive up to <strong>3 bags per reservation</strong> to accelerate waste reduction, with excess inventory distributed proportionally among early reservations</li>
+                <li>Reservations are processed at the end of each day, with bag allocation prioritized by reservation timestamp when inventory is limited</li>
               </ul>
             </div>
 
             <div className="bg-green-50 rounded-lg p-4 mt-4">
-              <h4 className="font-semibold text-green-900 mb-2">Metrics Tracked</h4>
+              <h4 className="font-semibold text-green-900 mb-2">Performance Metrics</h4>
               <ul className="list-disc list-inside text-gray-700 space-y-2">
-                <li><strong>Bags Sold:</strong> Total number of food bags successfully sold</li>
-                <li><strong>Bags Cancelled:</strong> Reservations that were cancelled</li>
-                <li><strong>Bags Unsold (Waste):</strong> Food bags that went unsold and were wasted</li>
-                <li><strong>Revenue Generated:</strong> Total revenue from confirmed sales</li>
-                <li><strong>Revenue Lost:</strong> Revenue lost due to cancellations</li>
-                <li><strong>Conversion Rate:</strong> Percentage of customers who made a purchase</li>
-                <li><strong>Gini Coefficient:</strong> Measure of fairness in restaurant exposure (0 = perfect equality, 1 = maximum inequality)</li>
+                <li><strong>Bags Sold:</strong> Total quantity of food bags successfully delivered to customers through confirmed reservations</li>
+                <li><strong>Bags Cancelled:</strong> Number of reservations that were cancelled, either due to inventory constraints or customer-initiated cancellations</li>
+                <li><strong>Bags Unsold (Waste):</strong> Total quantity of food bags that remained unsold at the end of each day, representing food waste</li>
+                <li><strong>Revenue Generated:</strong> Total monetary value from confirmed sales, calculated as the sum of (bags received × price per bag) for all successful transactions</li>
+                <li><strong>Revenue Lost:</strong> Potential revenue that was not realized due to reservation cancellations</li>
+                <li><strong>Revenue Efficiency:</strong> Percentage of total potential revenue (generated + lost) that was successfully captured, calculated as (Revenue Generated / (Revenue Generated + Revenue Lost)) × 100</li>
+                <li><strong>Conversion Rate:</strong> Percentage of arriving customers who completed a purchase, calculated as ((Total Arrivals - Customers Who Left) / Total Arrivals) × 100</li>
+                <li><strong>Gini Coefficient:</strong> Statistical measure of fairness in restaurant exposure distribution, ranging from 0 (perfect equality) to 1 (maximum inequality), calculated based on the distribution of impression counts across all restaurants</li>
               </ul>
             </div>
           </div>
@@ -142,67 +146,88 @@ export default function InfoSection() {
 
         {activeTab === 'simulation' && (
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold text-gray-900">How the Simulation Works</h3>
+            <h3 className="text-2xl font-bold text-gray-900">Simulation Execution Process</h3>
             
             <div className="space-y-4 text-gray-700">
               <div>
-                <h4 className="font-semibold text-lg text-gray-900 mb-2">1. Initialization</h4>
+                <h4 className="font-semibold text-lg text-gray-900 mb-2">1. Initialization Phase</h4>
                 <p>
-                  The simulation starts by loading restaurant data (stores.csv) and customer data (customer.csv). 
-                  Each restaurant is initialized with estimated and actual inventory. Actual inventory varies randomly 
-                  between 80% and 120% of the estimated value to simulate real-world variability.
+                  The simulation initializes by loading restaurant data from stores.csv and customer data from customer.csv. 
+                  Each restaurant is assigned an estimated inventory value from the input data, and actual daily inventory 
+                  is calculated by applying a random variance factor between 0.8 and 1.2 to the estimated value. This variance 
+                  models the inherent uncertainty in restaurant inventory management. Customer data includes geographical 
+                  coordinates, segment classification, willingness to pay, and store valuation preferences.
                 </p>
               </div>
 
               <div>
-                <h4 className="font-semibold text-lg text-gray-900 mb-2">2. Daily Customer Arrivals</h4>
+                <h4 className="font-semibold text-lg text-gray-900 mb-2">2. Customer Arrival Generation</h4>
                 <p>
-                  Each day, 100 customers arrive at random times throughout the day. Each customer has unique 
-                  characteristics including location, price sensitivity, preferences, and store valuations.
+                  Each simulation day processes 100 customer arrivals, with arrival times distributed throughout the 
+                  operating hours (8 AM to 9 PM). Each customer is characterized by unique attributes: geographical 
+                  location (latitude/longitude), customer segment (budget, premium, or regular), willingness to pay, 
+                  decision weights for rating, price, and novelty factors, and individual store valuations that influence 
+                  their preference calculations.
                 </p>
               </div>
 
               <div>
-                <h4 className="font-semibold text-lg text-gray-900 mb-2">3. Restaurant Ranking</h4>
+                <h4 className="font-semibold text-lg text-gray-900 mb-2">3. Restaurant Ranking and Display</h4>
                 <p>
-                  When a customer arrives, the selected ranking algorithm determines which 5 restaurants to display. 
-                  The algorithm considers factors like customer preferences, restaurant inventory, ratings, prices, 
-                  distance, and fairness metrics.
+                  Upon customer arrival, the selected ranking algorithm evaluates all available restaurants (those with 
+                  inventory exceeding current reservations) and selects the top 5 to display. The algorithm considers 
+                  multiple factors including customer preferences, restaurant inventory levels, current ratings, pricing, 
+                  geographical proximity, historical customer-restaurant interactions, and fairness metrics (impression 
+                  counts for fairness-focused algorithms). The specific selection methodology varies by algorithm, with 
+                  each implementing distinct optimization strategies.
                 </p>
               </div>
 
               <div>
-                <h4 className="font-semibold text-lg text-gray-900 mb-2">4. Customer Decision</h4>
+                <h4 className="font-semibold text-lg text-gray-900 mb-2">4. Customer Decision-Making Process</h4>
                 <p>
-                  The customer evaluates the displayed restaurants and either makes a reservation or leaves without 
-                  purchasing. The decision is based on a score that combines store valuation, rating, price, and 
-                  distance. If no restaurant meets the customer&apos;s threshold, they leave.
+                  Customers evaluate displayed restaurants using a scoring function that combines base store scores 
+                  (rating, price, distance, novelty) with adjustment factors including historical interaction success 
+                  rates, cancellation penalties, and inventory safety bonuses. The decision threshold is calculated as 
+                  the base leaving threshold plus a loyalty adjustment factor. Customers employ probabilistic selection 
+                  using a Softmax function with temperature parameter 2.0 to choose among valid options that meet their 
+                  threshold. If no restaurant meets the minimum threshold, the customer leaves without making a reservation.
                 </p>
               </div>
 
               <div>
-                <h4 className="font-semibold text-lg text-gray-900 mb-2">5. Reservation Processing</h4>
+                <h4 className="font-semibold text-lg text-gray-900 mb-2">5. Reservation Creation and Processing</h4>
                 <p>
-                  When a reservation is made, there&apos;s a 10% chance it will be cancelled. Cancelled reservations 
-                  result in lost revenue. Confirmed reservations generate revenue and reduce inventory.
+                  When a customer selects a restaurant, a reservation is created with PENDING status and added to the 
+                  daily reservation queue. Reservations are processed at the end of each day in chronological order. 
+                  If actual inventory exceeds the number of reservations, each customer receives a base allocation of 
+                  min(MAX_BAGS_PER_CUSTOMER, floor(actual_bags / num_reservations)) bags, with remaining inventory 
+                  distributed to early reservations up to the 3-bag maximum. When reservations exceed inventory, the first 
+                  N customers (where N = actual_bags) receive one bag each, and remaining reservations are cancelled. 
+                  An additional 10% of reservations are randomly cancelled to model real-world cancellation scenarios.
                 </p>
               </div>
 
               <div>
-                <h4 className="font-semibold text-lg text-gray-900 mb-2">6. End of Day</h4>
+                <h4 className="font-semibold text-lg text-gray-900 mb-2">6. End-of-Day Processing</h4>
                 <p>
-                  At the end of each day, any unsold bags are counted as waste. Restaurant ratings are updated based 
-                  on their performance (confirmations increase ratings, cancellations decrease them). The simulation 
-                  then moves to the next day.
+                  At the conclusion of each day, the system calculates waste as the difference between actual inventory 
+                  and total bags distributed to customers. Restaurant ratings are updated dynamically: each confirmed 
+                  order increases the rating, while cancellations decrease it. Customer history is updated to reflect 
+                  successful transactions, cancellations, and store interactions. Restaurant inventory is replenished 
+                  for the next day with a new variance factor applied. All daily reservations are cleared, and the 
+                  simulation proceeds to the next day with updated state information.
                 </p>
               </div>
 
               <div>
-                <h4 className="font-semibold text-lg text-gray-900 mb-2">7. Results & Comparison</h4>
+                <h4 className="font-semibold text-lg text-gray-900 mb-2">7. Results Aggregation and Comparison</h4>
                 <p>
-                  After 7 days, the simulation calculates comprehensive metrics for each algorithm including total 
-                  sales, waste, revenue, conversion rates, and fairness (Gini coefficient). These metrics allow us 
-                  to compare how different ranking strategies perform.
+                  Following the completion of all 7 simulation days, comprehensive metrics are aggregated for each 
+                  algorithm. The system calculates total bags sold, bags cancelled, bags wasted, revenue generated, 
+                  revenue lost, conversion rates, and Gini coefficients for exposure fairness. These metrics enable 
+                  comparative analysis of algorithm performance across multiple dimensions: waste reduction effectiveness, 
+                  revenue optimization, customer retention, and equitable restaurant exposure distribution.
                 </p>
               </div>
             </div>
