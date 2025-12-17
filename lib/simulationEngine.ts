@@ -904,6 +904,7 @@ export function runSimulation(
         let bagsDistributed = 0
         restaurantReservations.forEach((res, idx) => {
           let bagsForThisCustomer = bagsPerCustomer
+          // Distribute extra bags to first customers if possible
           if (extraBags > 0 && idx < extraBags && bagsForThisCustomer < MAX_BAGS_PER_CUSTOMER) {
             bagsForThisCustomer++
           }
@@ -936,6 +937,7 @@ export function runSimulation(
         }
       } else {
         // Not enough bags - first customers get 1 bag each, rest get cancelled
+        // This is where cancellations happen when actualBags < numReservations
         for (let i = 0; i < actualBags; i++) {
           const res = restaurantReservations[i]
           res.status = 'CONFIRMED'
